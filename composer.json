@@ -13,6 +13,7 @@
         }
     ],
     "require": {
-        "league/plates": "^3.4"
+        "league/plates": "^3.4",
+        "symfony/var-dumper": "^6.1"
     }
 }
