@@ -3,7 +3,7 @@
         'name' => 'jose.ferreira/relogio-ponto',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'ef9a098dc1b7848da119478bbd87a7249410865e',
+        'reference' => '005d39b16238650df951542354babfd937940f83',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'jose.ferreira/relogio-ponto' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'ef9a098dc1b7848da119478bbd87a7249410865e',
+            'reference' => '005d39b16238650df951542354babfd937940f83',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

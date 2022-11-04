@@ -6,29 +6,24 @@ use Exception;
 
 class ControllerRouter
 {
-  public function execute(string $route)
+  public function execute(array $router)
   {
-    if (!str_contains($route, '@')) {
-      throw new Exception('Route format invalid');
+
+    list($controller, $function) = $router;
+
+    if (!class_exists($controller)) {
+      throw new Exception($controller . ' not found ');
     }
 
-    list($controller, $function) = explode('@', $route);
-
-    $namespace = "App\controllers\\";
-    $controllerNamespace = $namespace . $controller;
-
-    if (!class_exists($controllerNamespace)) {
-      throw new Exception($controllerNamespace . ' not found ');
-    }
-
-    $controller = new $controllerNamespace;
+    $controller = new $controller;
 
     if (!method_exists($controller, $function)) {
-      throw new Exception($function . ' not found in ' . $controllerNamespace);
+      throw new Exception($function . ' not found in ' . get_class($controller));
     }
 
+    $params = new ControllerParams;
+    $params = $params->get($router);
 
-
-    $controller->$function();
+    $controller->$function($params);
   }
 }

@@ -10,8 +10,13 @@ class UserController
    *
    * @return object
    */
-  public function edit()
+  public function edit($id)
   {
-    dd("metod");
+    dd($id);
+  }
+
+  public function create()
+  {
+    dd("UserCreate");
   }
 }

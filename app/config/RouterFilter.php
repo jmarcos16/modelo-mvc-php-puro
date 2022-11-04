@@ -5,6 +5,7 @@ namespace App\config;
 use App\routes\Route;
 use App\support\Uri;
 use App\support\Method;
+use Exception;
 
 class RouterFilter
 {
@@ -20,10 +21,36 @@ class RouterFilter
     $this->routesRegistered = Route::getRoutes();
   }
 
+
+  private function filterDynemicsRoutes(array $routes)
+  {
+
+    foreach (array_keys($routes) as $value) {
+      if (!preg_match("/{[a-z]+}/", $value)) {
+        unset($routes[$value]);
+      }
+    }
+
+    return $routes;
+  }
+
+  private function limitParamsRoutes(string $router): void
+  {
+    $explodeRouterCount = count(explode('/', $router));
+    $explodeUriCount = count(explode('/',  rtrim($this->uri, '/')));
+
+    if ($explodeRouterCount > $explodeUriCount) {
+      throw new Exception('Estimated parameter in the Url');
+    } else if ($explodeRouterCount < $explodeUriCount) {
+      throw new Exception('Unexpected parameter in the Url');
+    }
+  }
+
   private function simpleRouter()
   {
-    if (in_array($this->uri, $this->routesRegistered[$this->method])) {
-      $this->routesRegistered[$this->method];
+
+    if (in_array($this->uri, array_keys($this->routesRegistered[$this->method]))) {
+      return $this->routesRegistered[$this->method][$this->uri];
     }
 
     return null;
@@ -31,25 +58,19 @@ class RouterFilter
 
   private function daynemicRouter()
   {
-    foreach ($this->routesRegistered[$this->method] as $index => $route) {
 
-      $regex = str_replace('/', '\/', ltrim($index, '/'));
-      $regex2 = str_replace('/', '\/', ltrim($this->uri));
-      dd($regex2);
-      if (preg_match("/^$regex$/", trim($this->uri))) {
-        dd("chegou");
+    $filterRoutes = $this->filterDynemicsRoutes($this->routesRegistered[$this->method]);
+
+    foreach ($filterRoutes as $index => $route) {
+      $regex = str_replace('/', '\/', ltrim(preg_replace("/{[a-z]+}/", '', $index), '/'));
+
+      if (preg_match("/^$regex/", trim($this->uri, '/'))) {
+        $validateCountParams = $this->limitParamsRoutes($index);
+        $routerRegisteredFound = $route;
+        break;
+      } else {
+        $routerRegisteredFound = null;
       }
-
-
-
-      // if ($index !== '/' && preg_match()) {
-      //   $routerRegisteredFound = $route;
-      //   dd("oui");
-      //   break;
-      // } else {
-
-      //   $routerRegisteredFound = null;
-      // }
     }
 
     return $routerRegisteredFound;
@@ -70,9 +91,6 @@ class RouterFilter
       return $router;
     }
 
-    return [
-      0 => "App\controllers\NotFoundController",
-      1 => "index"
-    ];
+    throw new Exception('Router not found');
   }
 }
